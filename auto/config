@@ -1,16 +1,19 @@
 #!/bin/sh
 set -eu
 
+# Custom RalyxOS filesystem image. Disable live-build's legacy security
+# source generator: this live-build version emits bookworm/updates, which is
+# invalid for Debian Bookworm. The installed system can use bookworm-security
+# after installation through its normal Debian Installer configuration.
 lb config \
   --mode debian \
   --architectures amd64 \
   --distribution bookworm \
   --binary-images iso-hybrid \
   --archive-areas 'main contrib non-free-firmware' \
+  --security false \
   --mirror-bootstrap https://deb.debian.org/debian/ \
   --mirror-chroot https://deb.debian.org/debian/ \
   --mirror-binary https://deb.debian.org/debian/ \
-  --apt-indices false \
-  --apt-recommends true \
   --iso-application RalyxOS \
   --iso-volume RALYXOS

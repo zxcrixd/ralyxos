@@ -1,4 +1,2 @@
-# live-build imports this file in addition to its generated APT sources.
-# Keep this file empty to avoid duplicate repository entries. Debian sources
-# are generated from auto/config for the build; Debian Installer configures
-# the target system's official repositories during installation.
+# Repository configuration is supplied by the Debian installer/target setup.
+# Kept empty so live-build cannot create duplicate or obsolete source lines.
