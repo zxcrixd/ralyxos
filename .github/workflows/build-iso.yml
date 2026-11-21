@@ -14,17 +14,30 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - name: Install build tools for GRUB ISO
+      - name: Install build tools for GRUB installer ISO
         run: |
           sudo apt-get update
           sudo apt-get install -y live-build debootstrap xorriso grub-pc-bin grub-efi-amd64-bin \
             grub-common grub2-common squashfs-tools mtools dosfstools fonts-dejavu-core
-      - name: Build customized RalyxOS image
+      - name: Configure RalyxOS
         run: |
           set -euxo pipefail
           sudo lb clean --purge || true
           sudo sh auto/config
+          # Some Ubuntu live-build defaults inject the obsolete
+          # security.debian.org bookworm/updates entry after lb config. Remove
+          # it from the generated config tree before lb build; the installer
+          # preseed supplies the target mirror configuration separately.
+          sudo find config -type f -print0 | xargs -0 -r sed -i \
+            '/security\.debian\.org/d'
+          if grep -RIn -- 'security\.debian\.org\|bookworm/updates' config; then
+            echo 'Invalid Debian security source remains in config' >&2
+            exit 1
+          fi
           sudo chmod +x config/includes.chroot/usr/local/bin/ralyx-ai
+      - name: Build customized RalyxOS installer image
+        run: |
+          set -euxo pipefail
           sudo lb build
       - name: Package and checksum ISO
         run: |
