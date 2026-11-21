@@ -1,8 +1,10 @@
 #!/bin/sh
 set -eu
 
-# Installer-only image. Debian Installer installs the target system from the
-# network; live-build does not create or boot a live root filesystem here.
+# Installer-only image; no live root filesystem or live boot mode.
+# live-build generates an invalid bookworm/updates security suite for this
+# setup, so disable its security source generation and add Debian's correct
+# bookworm-security source via config/chroot_sources instead.
 lb config \
   --mode debian \
   --architectures amd64 \
@@ -14,13 +16,13 @@ lb config \
   --mirror-bootstrap https://deb.debian.org/debian/ \
   --mirror-chroot https://deb.debian.org/debian/ \
   --mirror-binary https://deb.debian.org/debian/ \
-  --mirror-chroot-security https://security.debian.org/debian-security/ \
-  --mirror-binary-security https://security.debian.org/debian-security/ \
+  --mirror-chroot-security https://deb.debian.org/debian-security/ \
+  --mirror-binary-security https://deb.debian.org/debian-security/ \
   --iso-application RalyxOS \
   --iso-volume RALYXOS
 
-# live-build appends /<suite>/updates for security suites; Debian uses
-# <suite>-security. Rewrite generated source entries before any chroot apt run.
+# Strip the broken security entry produced by this live-build release. The
+# explicit security.list.chroot source below contains the correct suite.
 if [ -f config/chroot_sources/security.list.chroot ]; then
-  sed -i 's|bookworm/updates|bookworm-security|g' config/chroot_sources/security.list.chroot
+  sed -i '/bookworm\/updates/d' config/chroot_sources/security.list.chroot
 fi
