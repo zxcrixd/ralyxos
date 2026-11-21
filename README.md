@@ -1,6 +1,6 @@
 # RalyxOS
 
-RalyxOS is a minimal, terminal-first Debian-based Linux distribution. It uses the Linux kernel, GRUB, and Debian's APT repositories. The ISO is an **installer image**, not a live system: it boots the Debian Installer and installs to the target disk.
+RalyxOS is a Debian-based Linux distribution using the Linux kernel, GRUB, and Debian's official APT repositories. It provides an **installer ISO**, not a live system. The installer installs Debian Bookworm with the XFCE graphical desktop environment.
 
 ## Build ISO locally
 
@@ -14,7 +14,7 @@ sudo lb config
 sudo lb build
 ```
 
-The resulting ISO is under `live-image-amd64.hybrid.iso` (the exact filename may vary by live-build version). The image is installer-only; use the boot menu's Install option. An internet connection is required during installation to fetch Debian packages.
+The resulting ISO is typically named `live-image-amd64.hybrid.iso` (the exact name can vary by live-build version). The image boots the Debian text installer; it is not a live desktop. During installation, select XFCE in tasksel if it is not selected automatically. An internet connection is required to download the desktop and other packages.
 
 ## GitHub Actions
 
@@ -22,8 +22,8 @@ Push to `main`, open a pull request, or manually run **Build ISO** from Actions.
 
 ## Installed system
 
-The target system is a Debian installation with a Linux kernel, GRUB, systemd, a text console (no desktop environment), and APT pointed at Debian's official repositories. The installer can offer additional Debian packages based on its network and mirror configuration.
+The installed system uses Debian Bookworm, Linux, GRUB, systemd, XFCE, and APT configured for Debian's official repositories. Package availability and security updates come from Debian mirrors.
 
 ## Scope / limitations
 
-This repository provides a reproducible starting configuration, not a separately maintained kernel or package archive. RalyxOS tracks Debian Bookworm and relies on Debian mirrors for packages and security updates. The installer configuration and resulting ISO should be tested in a VM before installing on physical hardware.
+This repository provides a reproducible starting configuration, not a separately maintained kernel or package archive. The installer configuration and resulting ISO should be tested in a VM before installing on physical hardware.
