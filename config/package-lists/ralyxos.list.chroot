@@ -1,4 +1,9 @@
-# Minimal text-only installed environment. No desktop or display server.
+# XFCE graphical desktop and practical laptop/network support.
 linux-image-amd64
 systemd-sysv
 apt
+task-xfce-desktop
+network-manager
+network-manager-gnome
+firmware-linux
+firmware-linux-nonfree

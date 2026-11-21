@@ -1,10 +1,12 @@
 # RalyxOS
 
-RalyxOS is a Debian-based Linux distribution using the Linux kernel, GRUB, and Debian's official APT repositories. It provides an **installer ISO**, not a live system. The installer installs Debian Bookworm with the XFCE graphical desktop environment.
+RalyxOS is a Debian-based Linux distribution using the Linux kernel, GRUB, and Debian's official APT repositories. It provides an **installer ISO**, not a live system. The installed system is designed around the XFCE desktop.
 
-## Build ISO locally
+## Build ISO
 
-On a Debian 12 (Bookworm) or newer build host:
+Push to `main`, open a pull request, or manually run **Build ISO** from GitHub Actions. The workflow uploads the resulting ISO and SHA-256 checksum as artifacts. A manually run workflow can optionally publish the ISO to a GitHub Release by supplying a tag such as `v0.1.0`.
+
+To build locally on Debian:
 
 ```sh
 sudo apt update
@@ -14,16 +16,10 @@ sudo lb config
 sudo lb build
 ```
 
-The resulting ISO is typically named `live-image-amd64.hybrid.iso` (the exact name can vary by live-build version). The image boots the Debian text installer; it is not a live desktop. During installation, select XFCE in tasksel if it is not selected automatically. An internet connection is required to download the desktop and other packages.
+## Desktop style
 
-## GitHub Actions
+RalyxOS uses a simple dark XFCE look: Adwaita-dark controls and window borders, Adwaita icons, and a custom RalyxOS navy/teal/blue wallpaper. These defaults are staged for new user accounts. This is a branded configuration using Debian's available theme assets, not a separately authored GTK theme engine.
 
-Push to `main`, open a pull request, or manually run **Build ISO** from Actions. The workflow uploads the ISO as an artifact. A manually run workflow can optionally publish an ISO as a GitHub Release by supplying a tag such as `v0.1.0`.
+## Hardware
 
-## Installed system
-
-The installed system uses Debian Bookworm, Linux, GRUB, systemd, XFCE, and APT configured for Debian's official repositories. Package availability and security updates come from Debian mirrors.
-
-## Scope / limitations
-
-This repository provides a reproducible starting configuration, not a separately maintained kernel or package archive. The installer configuration and resulting ISO should be tested in a VM before installing on physical hardware.
+The target is amd64. Hardware support varies; Debian's `non-free-firmware` repository area is enabled. This does not guarantee every Wi-Fi adapter or NVIDIA device will work out of the box. Test the installer on the intended hardware or in a VM first.

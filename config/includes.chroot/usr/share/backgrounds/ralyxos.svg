@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#101828"/><stop offset="1" stop-color="#172d45"/></linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#37d6c0"/><stop offset="1" stop-color="#458bff"/></linearGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+  <circle cx="1500" cy="250" r="440" fill="#244b68" opacity=".22"/>
+  <path d="M0 850 Q460 590 900 860 T1920 760 V1080 H0Z" fill="#14263b" opacity=".85"/>
+  <path d="M0 900 Q460 640 900 910 T1920 810" fill="none" stroke="url(#accent)" stroke-width="5" opacity=".8"/>
+  <text x="150" y="470" fill="#f2f7ff" font-family="sans-serif" font-size="108" font-weight="700" letter-spacing="8">RALYXOS</text>
+  <text x="158" y="535" fill="#91a9c2" font-family="sans-serif" font-size="30" letter-spacing="5">A CLEARER WAY TO LINUX</text>
+</svg>
