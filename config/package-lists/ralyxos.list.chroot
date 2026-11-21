@@ -1,5 +1,6 @@
 # RalyxOS desktop and core system
 linux-image-amd64
+linux-headers-amd64
 systemd-sysv
 apt
 xfce4
@@ -22,8 +23,6 @@ python3-gi
 python3-requests
 gir1.2-gtk-3.0
 adwaita-icon-theme
-
-# Default applications
 orage
 orage-data
 galculator
