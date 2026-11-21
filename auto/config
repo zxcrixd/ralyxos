@@ -1,7 +1,8 @@
 #!/bin/sh
 set -eu
 
-# Installer-only image; no live root filesystem or live boot mode.
+# Installer-only image. Debian Installer installs the target system from the
+# network; live-build does not create or boot a live root filesystem here.
 lb config \
   --mode debian \
   --architectures amd64 \
@@ -17,3 +18,9 @@ lb config \
   --mirror-binary-security https://security.debian.org/debian-security/ \
   --iso-application RalyxOS \
   --iso-volume RALYXOS
+
+# live-build appends /<suite>/updates for security suites; Debian uses
+# <suite>-security. Rewrite generated source entries before any chroot apt run.
+if [ -f config/chroot_sources/security.list.chroot ]; then
+  sed -i 's|bookworm/updates|bookworm-security|g' config/chroot_sources/security.list.chroot
+fi
