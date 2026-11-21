@@ -14,10 +14,15 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - name: Install build tools
+      - name: Install build tools and ISO boot assets
         run: |
           sudo apt-get update
-          sudo apt-get install -y live-build debootstrap xorriso grub-pc-bin grub-efi-amd64-bin squashfs-tools
+          sudo apt-get install -y live-build debootstrap xorriso isolinux syslinux syslinux-common \
+            grub-pc-bin grub-efi-amd64-bin squashfs-tools mtools dosfstools
+      - name: Verify bootloader assets
+        run: |
+          test -f /usr/lib/ISOLINUX/isolinux.bin
+          test -f /usr/lib/syslinux/modules/bios/vesamenu.c32
       - name: Build customized RalyxOS image
         run: |
           sudo lb clean --purge || true
