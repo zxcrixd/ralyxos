@@ -1,9 +1,9 @@
 #!/bin/sh
 set -eu
 
-# Custom RalyxOS filesystem image. Keep live-build's legacy security source
-# disabled and explicitly select the Debian kernel package so this version of
-# live-build does not try to download the unavailable Contents index.
+# Build the custom RalyxOS filesystem. Disable live-build's automatic kernel
+# discovery: this old live-build release downloads a missing Contents index.
+# The kernel is installed normally from the package list instead.
 lb config \
   --mode debian \
   --architectures amd64 \
@@ -11,7 +11,7 @@ lb config \
   --binary-images iso-hybrid \
   --archive-areas 'main contrib non-free-firmware' \
   --security false \
-  --linux-packages 'linux-image-amd64' \
+  --linux-packages none \
   --mirror-bootstrap https://deb.debian.org/debian/ \
   --mirror-chroot https://deb.debian.org/debian/ \
   --mirror-binary https://deb.debian.org/debian/ \

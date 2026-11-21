@@ -1,6 +1,5 @@
 # RalyxOS desktop and core system
 linux-image-amd64
-linux-headers-amd64
 systemd-sysv
 apt
 xfce4
