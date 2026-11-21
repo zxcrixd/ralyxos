@@ -1,0 +1,18 @@
+#!/bin/sh
+set -eu
+
+# Installer-only image: no live root filesystem or live boot mode.
+lb config \
+  --mode debian \
+  --architectures amd64 \
+  --distribution bookworm \
+  --binary-images iso-hybrid \
+  --bootloaders grub-efi \
+  --debian-installer netinst \
+  --debian-installer-gui false \
+  --archive-areas 'main contrib non-free-firmware' \
+  --mirror-bootstrap https://deb.debian.org/debian/ \
+  --mirror-chroot https://deb.debian.org/debian/ \
+  --mirror-binary https://deb.debian.org/debian/ \
+  --iso-application RalyxOS \
+  --iso-volume RALYXOS

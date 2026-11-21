@@ -1,0 +1,61 @@
+name: Build ISO
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Optional release tag to publish (for example v0.1.0)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y live-build debootstrap xorriso grub-pc-bin grub-efi-amd64-bin
+
+      - name: Configure and build installer ISO
+        run: |
+          sudo lb clean --purge || true
+          sudo lb config
+          sudo lb build
+
+      - name: Find and rename ISO
+        run: |
+          iso=$(find . -maxdepth 1 -type f -name '*.iso' -print -quit)
+          test -n "$iso"
+          cp "$iso" ralyxos-amd64.iso
+          sha256sum ralyxos-amd64.iso > ralyxos-amd64.iso.sha256
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ralyxos-amd64-iso
+          path: |
+            ralyxos-amd64.iso
+            ralyxos-amd64.iso.sha256
+          if-no-files-found: error
+          compression-level: 0
+
+      - name: Publish release assets
+        if: github.event_name == 'workflow_dispatch' && inputs.release_tag != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.release_tag }}
+        run: |
+          gh release create "$TAG" ralyxos-amd64.iso ralyxos-amd64.iso.sha256 \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "RalyxOS $TAG" \
+            --notes "Installer-only amd64 ISO built by GitHub Actions."

@@ -1,0 +1,4 @@
+# Minimal text-only installed environment. No desktop or display server.
+linux-image-amd64
+systemd-sysv
+apt
