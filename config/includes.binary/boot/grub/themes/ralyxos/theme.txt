@@ -1,0 +1,15 @@
+title-text: "RALYXOS"
+title-color: "#37d6c0"
+message-font: "DejaVu Sans 18"
+terminal-font: "DejaVu Sans Mono 16"
+desktop-image: "background.svg"
++ boot_menu {
+  left = 25%
+  top = 35%
+  width = 50%
+  height = 45%
+  item_font = "DejaVu Sans 16"
+  item_color = "#dcecff"
+  selected_item_color = "#101828"
+  selected_item_pixmap_style = "stretch"
+}

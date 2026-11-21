@@ -1,14 +1,16 @@
 #!/bin/sh
 set -eu
 
-# Build the custom RalyxOS filesystem. Disable live-build's automatic kernel
-# discovery: this old live-build release downloads a missing Contents index.
-# The kernel is installed normally from the package list instead.
+# RalyxOS custom Debian-based installer/live filesystem with GRUB only.
+# The singular --bootloader option is supported by live-build; --bootloaders
+# is not. Disabling automatic kernel discovery avoids the obsolete Contents
+# index lookup seen in the GitHub runner's live-build package.
 lb config \
   --mode debian \
   --architectures amd64 \
   --distribution bookworm \
   --binary-images iso-hybrid \
+  --bootloader grub \
   --archive-areas 'main contrib non-free-firmware' \
   --security false \
   --linux-packages none \
