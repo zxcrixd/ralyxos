@@ -29,8 +29,6 @@ jobs:
       - name: Configure and build Debian installer ISO
         run: |
           sudo lb clean --purge || true
-          # Apply repository configuration explicitly. Plain `lb config` used
-          # runner defaults (Ubuntu/Precise) instead of this project's Debian config.
           sudo sh auto/config
           sudo lb build
 

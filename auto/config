@@ -2,12 +2,12 @@
 set -eu
 
 # Installer-only image; no live root filesystem or live boot mode.
+# Options are limited to those supported by Debian Bookworm live-build.
 lb config \
   --mode debian \
   --architectures amd64 \
   --distribution bookworm \
   --binary-images iso-hybrid \
-  --bootloaders grub-efi \
   --debian-installer netinst \
   --debian-installer-gui false \
   --archive-areas 'main contrib non-free-firmware' \
