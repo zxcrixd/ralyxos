@@ -2,8 +2,6 @@
 set -eu
 
 # Installer-only image; no live root filesystem or live boot mode.
-# Disable live-build's runner defaults for obsolete security/updates entries;
-# the installed system gets the current Debian sources below.
 lb config \
   --mode debian \
   --architectures amd64 \
@@ -11,8 +9,6 @@ lb config \
   --binary-images iso-hybrid \
   --debian-installer netinst \
   --debian-installer-gui false \
-  --security false \
-  --updates false \
   --archive-areas 'main contrib non-free-firmware' \
   --mirror-bootstrap https://deb.debian.org/debian/ \
   --mirror-chroot https://deb.debian.org/debian/ \
