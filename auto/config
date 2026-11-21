@@ -1,19 +1,17 @@
 #!/bin/sh
 set -eu
 
-# RalyxOS custom Debian-based installer/live filesystem with GRUB only.
-# The singular --bootloader option is supported by live-build; --bootloaders
-# is not. Disabling automatic kernel discovery avoids the obsolete Contents
-# index lookup seen in the GitHub runner's live-build package.
+# RalyxOS is an installer ISO, not a live system. Debian Installer boots its
+# own kernel and initrd from /install.amd; it must not use /live/* paths.
 lb config \
   --mode debian \
   --architectures amd64 \
   --distribution bookworm \
   --binary-images iso-hybrid \
   --bootloader grub \
+  --debian-installer netinst \
+  --debian-installer-gui false \
   --archive-areas 'main contrib non-free-firmware' \
-  --security false \
-  --linux-packages none \
   --mirror-bootstrap https://deb.debian.org/debian/ \
   --mirror-chroot https://deb.debian.org/debian/ \
   --mirror-binary https://deb.debian.org/debian/ \
