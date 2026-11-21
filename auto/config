@@ -1,5 +1,16 @@
 #!/bin/sh
 set -eu
-# Retained for reference only. ISO creation is performed by the dedicated
-# Debian Installer netboot build workflow to avoid live-build security suite
-# rewriting issues.
+
+lb config \
+  --mode debian \
+  --architectures amd64 \
+  --distribution bookworm \
+  --binary-images iso-hybrid \
+  --archive-areas 'main contrib non-free-firmware' \
+  --mirror-bootstrap https://deb.debian.org/debian/ \
+  --mirror-chroot https://deb.debian.org/debian/ \
+  --mirror-binary https://deb.debian.org/debian/ \
+  --apt-indices false \
+  --apt-recommends true \
+  --iso-application RalyxOS \
+  --iso-volume RALYXOS

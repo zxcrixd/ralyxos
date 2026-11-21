@@ -1,48 +1,38 @@
-name: Build ISO
+name: Build RalyxOS ISO
 
 on:
   push:
     branches: [main]
   pull_request:
   workflow_dispatch:
-    inputs:
-      release_tag:
-        description: 'Optional release tag to publish (for example v0.1.0)'
-        required: false
-        type: string
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-24.04
     steps:
-      - name: Download Debian Bookworm installer ISO
+      - uses: actions/checkout@v4
+      - name: Install build tools
         run: |
-          set -euxo pipefail
-          curl -fL --retry 3 \
-            https://cdimage.debian.org/cdimage/archive/12.11.0/amd64/iso-cd/debian-12.11.0-amd64-netinst.iso \
-            -o ralyxos-amd64.iso
+          sudo apt-get update
+          sudo apt-get install -y live-build debootstrap xorriso grub-pc-bin grub-efi-amd64-bin squashfs-tools
+      - name: Build customized RalyxOS image
+        run: |
+          sudo lb clean --purge || true
+          sudo sh auto/config
+          sudo lb build
+      - name: Package and checksum ISO
+        run: |
+          iso=$(find . -maxdepth 1 -type f -name '*.iso' -print -quit)
+          test -n "$iso"
+          cp "$iso" ralyxos-amd64.iso
           sha256sum ralyxos-amd64.iso > ralyxos-amd64.iso.sha256
-
-      - name: Upload ISO artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: ralyxos-amd64-iso
+          name: ralyxos-amd64
           path: |
             ralyxos-amd64.iso
             ralyxos-amd64.iso.sha256
-          if-no-files-found: error
           compression-level: 0
-
-      - name: Publish release assets
-        if: github.event_name == 'workflow_dispatch' && inputs.release_tag != ''
-        env:
-          GH_TOKEN: ${{ github.token }}
-          TAG: ${{ inputs.release_tag }}
-        run: |
-          gh release create "$TAG" ralyxos-amd64.iso ralyxos-amd64.iso.sha256 \
-            --repo "$GITHUB_REPOSITORY" \
-            --title "RalyxOS $TAG" \
-            --notes "Debian Bookworm amd64 netinst installer ISO. Choose XFCE during installation."

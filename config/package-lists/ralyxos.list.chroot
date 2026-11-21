@@ -1,8 +1,9 @@
-# XFCE graphical desktop and practical laptop/network support.
 linux-image-amd64
 systemd-sysv
 apt
-task-xfce-desktop
+xfce4
+xfce4-goodies
+lightdm
 network-manager
 network-manager-gnome
 firmware-linux
@@ -10,3 +11,8 @@ firmware-linux-nonfree
 curl
 jq
 ca-certificates
+python3
+python3-gi
+python3-requests
+gir1.2-gtk-3.0
+adwaita-icon-theme

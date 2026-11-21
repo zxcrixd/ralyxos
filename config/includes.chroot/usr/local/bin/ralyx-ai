@@ -1,15 +1,81 @@
-#!/bin/sh
-set -eu
+#!/usr/bin/python3
+import json
+import os
+import sys
+import urllib.request
+import urllib.error
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, GLib
 
-: "${GROQ_API_KEY:?Set GROQ_API_KEY in the environment before using ralyx-ai}"
-model=${GROQ_MODEL:-llama-3.3-70b-versatile}
-prompt=${*:-}
-if [ -z "$prompt" ]; then
-  printf 'Usage: ralyx-ai <question>\n' >&2
-  exit 2
-fi
-payload=$(jq -n --arg model "$model" --arg prompt "$prompt" '{model:$model,messages:[{role:"user",content:$prompt}],temperature:0.2}')
-curl -fsS https://api.groq.com/openai/v1/chat/completions \
-  -H "Authorization: Bearer $GROQ_API_KEY" \
-  -H 'Content-Type: application/json' \
-  -d "$payload" | jq -r '.choices[0].message.content // .error.message // "No response"'
+MODELS = [
+    'llama-3.3-70b-versatile',
+    'llama-3.1-8b-instant',
+    'openai/gpt-oss-20b',
+    'openai/gpt-oss-120b',
+]
+
+class RalyxAI(Gtk.Window):
+    def __init__(self):
+        super().__init__(title='Ralyx AI')
+        self.set_default_size(760, 560)
+        self.set_border_width(12)
+        root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        self.add(root)
+        top = Gtk.Box(spacing=8)
+        top.pack_start(Gtk.Label(label='Model:'), False, False, 0)
+        self.model = Gtk.ComboBoxText()
+        for item in MODELS:
+            self.model.append_text(item)
+        self.model.set_active(0)
+        top.pack_start(self.model, False, False, 0)
+        root.pack_start(top, False, False, 0)
+        self.chat = Gtk.TextView(editable=False, wrap_mode=Gtk.WrapMode.WORD_CHAR)
+        self.chat.get_buffer().set_text('Ralyx AI\n\nSet GROQ_API_KEY and ask a question below.\n')
+        scroll = Gtk.ScrolledWindow()
+        scroll.add(self.chat)
+        root.pack_start(scroll, True, True, 0)
+        bottom = Gtk.Box(spacing=8)
+        self.entry = Gtk.Entry()
+        self.entry.set_placeholder_text('Введите вопрос…')
+        self.entry.connect('activate', self.ask)
+        bottom.pack_start(self.entry, True, True, 0)
+        button = Gtk.Button(label='Send')
+        button.connect('clicked', self.ask)
+        bottom.pack_start(button, False, False, 0)
+        root.pack_start(bottom, False, False, 0)
+
+    def append(self, text):
+        buf = self.chat.get_buffer()
+        end = buf.get_end_iter()
+        buf.insert(end, text + '\n\n')
+        self.chat.scroll_to_iter(buf.get_end_iter(), 0, False, 0, 0)
+
+    def ask(self, *_):
+        prompt = self.entry.get_text().strip()
+        if not prompt:
+            return
+        key = os.environ.get('GROQ_API_KEY')
+        if not key:
+            self.append('Ошибка: задайте GROQ_API_KEY в окружении пользователя.')
+            return
+        self.entry.set_text('')
+        self.append('Вы: ' + prompt + '\nRalyx AI: …')
+        model = self.model.get_active_text()
+        def request():
+            body = json.dumps({'model': model, 'messages': [{'role': 'user', 'content': prompt}], 'temperature': 0.2}).encode()
+            req = urllib.request.Request('https://api.groq.com/openai/v1/chat/completions', data=body, headers={'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json'})
+            try:
+                with urllib.request.urlopen(req, timeout=90) as response:
+                    data = json.load(response)
+                answer = data['choices'][0]['message']['content']
+            except Exception as exc:
+                answer = 'Ошибка запроса: ' + str(exc)
+            GLib.idle_add(self.append, answer)
+        import threading
+        threading.Thread(target=request, daemon=True).start()
+
+win = RalyxAI()
+win.connect('destroy', Gtk.main_quit)
+win.show_all()
+Gtk.main()
