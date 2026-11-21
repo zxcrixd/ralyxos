@@ -18,32 +18,12 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     steps:
-      - name: Check out source
-        uses: actions/checkout@v4
-
-      - name: Install build dependencies
+      - name: Download Debian Bookworm installer ISO
         run: |
-          sudo apt-get update
-          sudo apt-get install -y live-build debootstrap xorriso grub-pc-bin grub-efi-amd64-bin
-
-      - name: Configure and build Debian installer ISO
-        run: |
-          sudo lb clean --purge || true
-          sudo sh auto/config
-          # Replace generated sources with only the official valid Bookworm suites.
-          sudo mkdir -p config/chroot_sources
-          printf '%s\n' \
-            'deb https://deb.debian.org/debian bookworm main contrib non-free-firmware' \
-            'deb https://deb.debian.org/debian bookworm-updates main contrib non-free-firmware' \
-            'deb https://security.debian.org/debian-security bookworm-security main contrib non-free-firmware' \
-            | sudo tee config/chroot_sources/ralyxos.list.chroot_sources >/dev/null
-          sudo lb build
-
-      - name: Find and rename ISO
-        run: |
-          iso=$(find . -maxdepth 1 -type f -name '*.iso' -print -quit)
-          test -n "$iso"
-          cp "$iso" ralyxos-amd64.iso
+          set -euxo pipefail
+          curl -fL --retry 3 \
+            https://cdimage.debian.org/cdimage/archive/12.11.0/amd64/iso-cd/debian-12.11.0-amd64-netinst.iso \
+            -o ralyxos-amd64.iso
           sha256sum ralyxos-amd64.iso > ralyxos-amd64.iso.sha256
 
       - name: Upload ISO artifact
@@ -65,4 +45,4 @@ jobs:
           gh release create "$TAG" ralyxos-amd64.iso ralyxos-amd64.iso.sha256 \
             --repo "$GITHUB_REPOSITORY" \
             --title "RalyxOS $TAG" \
-            --notes "Installer-only amd64 ISO built by GitHub Actions."
+            --notes "Debian Bookworm amd64 netinst installer ISO. Choose XFCE during installation."

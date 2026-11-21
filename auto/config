@@ -1,28 +1,5 @@
 #!/bin/sh
 set -eu
-
-# Installer-only image; no live root filesystem or live boot mode.
-# live-build generates an invalid bookworm/updates security suite for this
-# setup, so disable its security source generation and add Debian's correct
-# bookworm-security source via config/chroot_sources instead.
-lb config \
-  --mode debian \
-  --architectures amd64 \
-  --distribution bookworm \
-  --binary-images iso-hybrid \
-  --debian-installer netinst \
-  --debian-installer-gui false \
-  --archive-areas 'main contrib non-free-firmware' \
-  --mirror-bootstrap https://deb.debian.org/debian/ \
-  --mirror-chroot https://deb.debian.org/debian/ \
-  --mirror-binary https://deb.debian.org/debian/ \
-  --mirror-chroot-security https://deb.debian.org/debian-security/ \
-  --mirror-binary-security https://deb.debian.org/debian-security/ \
-  --iso-application RalyxOS \
-  --iso-volume RALYXOS
-
-# Strip the broken security entry produced by this live-build release. The
-# explicit security.list.chroot source below contains the correct suite.
-if [ -f config/chroot_sources/security.list.chroot ]; then
-  sed -i '/bookworm\/updates/d' config/chroot_sources/security.list.chroot
-fi
+# Retained for reference only. ISO creation is performed by the dedicated
+# Debian Installer netboot build workflow to avoid live-build security suite
+# rewriting issues.
