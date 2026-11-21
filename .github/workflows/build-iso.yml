@@ -22,6 +22,7 @@ jobs:
         run: |
           sudo lb clean --purge || true
           sudo sh auto/config
+          sudo chmod +x config/includes.chroot/usr/local/bin/ralyx-ai
           sudo lb build
       - name: Package and checksum ISO
         run: |

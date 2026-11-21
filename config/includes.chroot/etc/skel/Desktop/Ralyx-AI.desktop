@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Ralyx AI
-Comment=Chat with Groq models
-Exec=/usr/local/bin/ralyx-ai
+Comment=Optional Groq AI assistant
+Exec=xfce4-terminal --command=/usr/local/bin/ralyx-ai
 Icon=applications-science
 Terminal=false
 Type=Application

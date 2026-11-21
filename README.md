@@ -1,22 +1,30 @@
 # RalyxOS
 
-RalyxOS is a Debian-based Linux distribution using the Linux kernel, GRUB, XFCE, and Debian's official APT repositories. It provides an installer ISO, not a live system.
+RalyxOS is a customized Debian Bookworm amd64 system with Linux, GRUB, XFCE, Debian APT repositories, and a branded desktop. The image is built from this repository; it is not a renamed Debian download.
 
-## Optional AI integration
+## Included by default
 
-The target system includes an optional `ralyx-ai` terminal helper for Groq's OpenAI-compatible API. **Never put an API key in this repository, an ISO, a workflow, or shell history.** Configure it after installation using a newly generated key:
+- XFCE desktop, terminal, settings, Thunar file manager and LightDM
+- NetworkManager, Wi-Fi firmware packages and audio controls
+- Calendar: Orage
+- Settings: XFCE Settings Manager
+- Calculator: Galculator
+- FFmpeg
+- Flatpak
+- LibreOffice with GTK integration and Russian localization
+- Optional keyless `ralyx-ai` terminal utility for Groq-compatible API access
 
-```sh
-export GROQ_API_KEY='your-new-key'
-ralyx-ai 'Explain how to check Wi-Fi drivers on Debian'
+## Ralyx AI
+
+The utility is included without an API key. Configure a key locally only when needed:
+
+```bash
+export GROQ_API_KEY='your-key'
+ralyx-ai 'Как проверить драйвер Wi-Fi?'
 ```
 
-For persistence, use a protected file such as `~/.config/ralyxos/ai.env` with mode 600 and source it from your shell profile. `GROQ_MODEL` can override the default model. Prompts are sent to Groq; do not send passwords, private keys, or sensitive personal data. Network access and Groq account limits/pricing apply.
+The key is deliberately absent from the repository and ISO. `GROQ_MODEL` can select another model. Network access is required.
 
-## Important security note
+## Build
 
-The API key previously pasted in chat is considered compromised because it was exposed in plain text. Revoke it immediately in the Groq dashboard and create a replacement. It has not been added to the repository or build workflow.
-
-## Build status
-
-The current GitHub Actions workflow is still a Debian netinst test baseline, not a genuinely customized RalyxOS installer. The RalyxOS package and branding files are prepared, but the installer-image generation must be switched to a Debian Installer build before the result should be called a finished RalyxOS ISO.
+GitHub Actions runs `auto/config`, builds the customized filesystem with `live-build`, and uploads `ralyxos-amd64.iso` plus its SHA-256 checksum. Test the result in Limbo using an amd64/x86_64 guest and a blank virtual disk. This is a build configuration and should be validated by a successful Actions run before production use.
