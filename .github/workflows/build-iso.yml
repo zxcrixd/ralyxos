@@ -26,10 +26,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y live-build debootstrap xorriso grub-pc-bin grub-efi-amd64-bin
 
-      - name: Configure and build installer ISO
+      - name: Configure and build Debian installer ISO
         run: |
           sudo lb clean --purge || true
-          sudo lb config
+          # Apply repository configuration explicitly. Plain `lb config` used
+          # runner defaults (Ubuntu/Precise) instead of this project's Debian config.
+          sudo sh auto/config
           sudo lb build
 
       - name: Find and rename ISO
