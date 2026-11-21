@@ -7,3 +7,6 @@ network-manager
 network-manager-gnome
 firmware-linux
 firmware-linux-nonfree
+curl
+jq
+ca-certificates

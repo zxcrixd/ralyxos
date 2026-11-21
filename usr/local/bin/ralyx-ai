@@ -1,0 +1,20 @@
+#!/bin/sh
+set -eu
+
+# RalyxOS AI helper. Never store the API key in the image or repository.
+: "${GROQ_API_KEY:?Set GROQ_API_KEY in the environment before using ralyx-ai}"
+
+model=${GROQ_MODEL:-llama-3.3-70b-versatile}
+prompt=${*:-}
+if [ -z "$prompt" ]; then
+  printf 'Usage: ralyx-ai <question>\n' >&2
+  exit 2
+fi
+
+payload=$(jq -n --arg model "$model" --arg prompt "$prompt" \
+  '{model:$model,messages:[{role:"user",content:$prompt}],temperature:0.2}')
+response=$(curl -fsS https://api.groq.com/openai/v1/chat/completions \
+  -H "Authorization: Bearer $GROQ_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d "$payload")
+printf '%s\n' "$response" | jq -r '.choices[0].message.content // .error.message // "No response"'
